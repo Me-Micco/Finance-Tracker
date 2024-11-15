@@ -5,14 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Visualization</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            width: 60%; /* Set width to 60% of the parent container */
+            height: 500px; /* Increase the height to make it more visible */
+            max-width: 1000px; /* Limit the maximum width to 1000px */
+            margin: 0 auto 20px; /* Center the chart and add some space below */
+        }        
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>Expense Visualization</h1>
-        <canvas id="barChart"></canvas>
-        <canvas id="pieChart"></canvas>
-        <canvas id="lineChart"></canvas>
-        <canvas id="scatterChart"></canvas>
+        <div class="chart-container"><canvas id="barChart"></canvas></div>
+        <div class="chart-container"><canvas id="pieChart"></canvas></div>
+        <div class="chart-container"><canvas id="lineChart"></canvas></div>
+        <div class="chart-container"><canvas id="scatterChart"></canvas></div>
         <button id="back-btn" style="margin-top: 20px;">Back to Expense Tracker</button>
     </div>
 
