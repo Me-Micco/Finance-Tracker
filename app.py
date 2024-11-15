@@ -52,5 +52,10 @@ def delete_expense():
     
     return jsonify({"message": "Expense deleted successfully!"})
 
+@app.route('/visualize')
+def visualize():
+    return render_template("visualize.html")
+
+
 if __name__ == "__main__":
     app.run(debug=True)

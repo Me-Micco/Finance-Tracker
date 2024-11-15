@@ -2,6 +2,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const expenseForm = document.getElementById("expense-form");
     const expenseTable = document.getElementById("expense-table").querySelector("tbody");
 
+    document.getElementById("visualize-btn").addEventListener("click", () => {
+        window.location.href = "/visualize";
+    });
+    
+
     expenseForm.addEventListener("submit", async (event) => {
         event.preventDefault();
         
