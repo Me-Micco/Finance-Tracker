@@ -32,67 +32,73 @@ Ensure you have the following installed:
 1. **Clone the Repository**:
 
    ```bash
-   git clone https://github.com/me-micco/Finance-Tracker.git
+      git clone https://github.com/me-micco/Finance-Tracker.git
 
 2. **Navigate to the Project Directory**:
 
-bash
-    cd Finance-Tracker
+```bash
+cd Finance-Tracker
+```
 
 3. **Install Dependencies**:
 
-bash
-    pip install -r requirements.txt
+```bash
+pip install -r requirements.txt
+```
 
 4. **Run the Application**:
 
-bash
-    python app.py
+```bash
+python app.py
+```
 
 5. **Access the Application**:
 
 Open your web browser and go to http://127.0.0.1:5000.
 
-Usage
-Adding Expenses
-Navigate to the Add Expense section.
-Fill in the fields:
-Date
-Category
-Amount
-(Optional) Remark
-Click Add Expense.
-Setting Budgets
-Go to the Set Budget section.
-Provide the category and budget amount.
-Click Set Budget.
-Visualizing Data
-View visual representations of your expenses and budgets in the Charts section:
+## Usage
 
-Line Chart: Compare expenses and budgets over time.
-Bar Chart: Monitor monthly expenses.
-Pie Chart: Check expense distribution by category.
-File Structure
-plaintext
-    Finance-Tracker/
-├── app.py                  # Main application script
-├── templates/              # HTML templates for the web interface
-│   ├── dashboard.html
-├── static/                 # Static files (CSS, JavaScript, etc.)
-│   ├── styles.css
-├── data/                   # JSON files for storing data
-│   ├── budgets.json
-│   ├── expenses.json
-├── requirements.txt        # Required Python packages
-└── README.md               # Project documentation
+### Adding Expenses
+1. Navigate to the **Add Expense** section.
+2. Fill in the following fields:
+   - **Date**
+   - **Category**
+   - **Amount**
+   - **(Optional) Remark**
+3. Click **Add Expense**.
 
-Future Enhancements
-User Authentication: Secure accounts for individual users.
-Export Data: Allow users to export expense and budget data to CSV or Excel.
-Advanced Analytics: Provide more detailed insights, such as savings patterns or predicted future expenses.
-License
-This project is licensed under the GPL License. See the LICENSE file for details.
+### Setting Budgets
+1. Go to the **Set Budget** section.
+2. Provide the **Category** and **Budget Amount**.
+3. Click **Set Budget**.
 
-Author
-Sachi Verma
+### Visualizing Data
+View visual representations of your expenses and budgets in the **Charts** section:
+- **Line Chart**: Compare expenses and budgets over time.
+- **Bar Chart**: Monitor monthly expenses.
+- **Pie Chart**: Check expense distribution by category.
+
+## File Structure
+
+The project follows this structure:
+
+Finance-Tracker/ ├── app.py # Main application script ├── templates/ # HTML templates for the web interface │ ├── dashboard.html ├── static/ # Static files (CSS, JavaScript, etc.) │ ├── styles.css ├── data/ # JSON files for storing data │ ├── budgets.json │ ├── expenses.json ├── requirements.txt # Required Python packages └── README.md # Project documentation
+
+markdown
+Copy code
+
+## Future Enhancements
+
+- **User Authentication**: Secure accounts for individual users.
+- **Export Data**: Allow users to export expense and budget data to CSV or Excel.
+- **Advanced Analytics**: Provide more detailed insights, such as savings patterns or predicted future expenses.
+
+## License
+
+This project is licensed under the **GPL License**. See the LICENSE file for details.
+
+## Author
+
+**Sachi Verma**
+
 Feel free to contribute to this project by submitting pull requests or reporting issues.
