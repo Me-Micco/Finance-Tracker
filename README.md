@@ -1,62 +1,98 @@
 # Finance Tracker
- 
-Certainly! Here's a README file content for your Expense Tracker application:
 
-Expense Tracker
-Expense Tracker is a simple Python application built using Tkinter and Matplotlib for tracking and visualizing expenses. It allows users to add, view, and delete expenses, as well as visualize expense data through various charts.
+Finance Tracker is a web-based application designed to help users efficiently manage their finances, including tracking expenses, setting budgets, and analyzing spending trends. Built with Flask and Chart.js, it provides a seamless way to add, view, and visualize financial data.
 
-Features
-Add Expense: Users can add expenses by providing the date, category, amount, and optionally, a monthly budget.
-View Expenses: Users can view all recorded expenses, including date, category, amount, and monthly budget.
-Delete Expense: Users can delete selected expenses from the records.
-Visualize Expenses: Users can visualize their expenses through:
-Bar chart showing total expenses each month.
-Pie chart showing expenses by category.
-Line chart for each category tracking expenses against the budget.
-Scatter plot for each category showing expenses over months.
+## Features
+
+### Core Functionalities
+- **Add Expense**: Record expenses by providing the date, category, amount, and optional remarks.
+- **Set Budget**: Define monthly budgets for specific categories.
+- **Delete Expense**: Remove expenses from the record by selecting them.
+- **View Expense List**: Display a detailed list of all recorded expenses.
+
+### Visualization Options
+- **Line Chart**: Compare monthly expenses against total budget over time.
+- **Bar Chart**: View monthly total expenses.
+- **Pie Chart**: Analyze expenses by category for a clear distribution.
+
+## Technologies Used
+- **Backend**: Python with Flask
+- **Frontend**: HTML, CSS, and Chart.js
+- **Storage**: JSON files for expense and budget data
+
+## Installation
+
+### Prerequisites
+Ensure you have the following installed:
+- Python 3.x
+- Pip
+
+### Steps
+
+1. **Clone the Repository**:
+
+   ```bash
+   git clone https://github.com/me-micco/Finance-Tracker.git
+
+2. **Navigate to the Project Directory**:
+
+bash
+    cd Finance-Tracker
+
+3. **Install Dependencies**:
+
+bash
+    pip install -r requirements.txt
+
+4. **Run the Application**:
+
+bash
+    python app.py
+
+5. **Access the Application**:
+
+Open your web browser and go to http://127.0.0.1:5000.
 
 Usage
+Adding Expenses
+Navigate to the Add Expense section.
+Fill in the fields:
+Date
+Category
+Amount
+(Optional) Remark
+Click Add Expense.
+Setting Budgets
+Go to the Set Budget section.
+Provide the category and budget amount.
+Click Set Budget.
+Visualizing Data
+View visual representations of your expenses and budgets in the Charts section:
 
-Adding Expense:
-Fill in the date, category, amount, and optionally, the monthly budget.
-Click the "Add Expense" button to add the expense.
-Viewing Expenses:
-Click the "View Expenses" button to see all recorded expenses.
-Deleting Expense:
-Select an expense from the list.
-Click the "Delete Expense" button to remove it from the records.
-Visualizing Expenses:
-Click the "Visualize Expenses" button to generate visualizations.
+Line Chart: Compare expenses and budgets over time.
+Bar Chart: Monitor monthly expenses.
+Pie Chart: Check expense distribution by category.
+File Structure
+plaintext
+    Finance-Tracker/
+├── app.py                  # Main application script
+├── templates/              # HTML templates for the web interface
+│   ├── dashboard.html
+├── static/                 # Static files (CSS, JavaScript, etc.)
+│   ├── styles.css
+├── data/                   # JSON files for storing data
+│   ├── budgets.json
+│   ├── expenses.json
+├── requirements.txt        # Required Python packages
+└── README.md               # Project documentation
 
-Requirements
-Python 3.x
-Tkinter
-Matplotlib
-Installation
-
-Clone this repository:
-bash
-Copy code
-git clone https://github.com/codelikeamachine/Finance-Tracker.git
-
-Navigate to the project directory:
-bash
-Copy code
-cd expense-tracker
-
-Install dependencies:
-
-bash
-Copy code
-pip install -r requirements.txt
-
-How to Run
-Execute the expense_tracker.py file:
-
-bash
-Copy code
-python expense_tracker.py
-
+Future Enhancements
+User Authentication: Secure accounts for individual users.
+Export Data: Allow users to export expense and budget data to CSV or Excel.
+Advanced Analytics: Provide more detailed insights, such as savings patterns or predicted future expenses.
 License
-This project is licensed under the GPL License - see the LICENSE file for details.
+This project is licensed under the GPL License. See the LICENSE file for details.
 
+Author
+Sachi Verma
+Feel free to contribute to this project by submitting pull requests or reporting issues.
