@@ -1,32 +1,30 @@
 [
     {
-        "date": "2024-11-01",
-        "category": "abc",
-        "amount": 500.0,
-        "monthly_budget": 0.0
+        "id": 1,
+        "date": "2024-5-26",
+        "category": "pizza",
+        "amount": 300.0,
+        "remark": "Test"
     },
     {
-        "date": "2024-11-02",
-        "category": "food",
-        "amount": 200.0,
-        "monthly_budget": 0.0
-    },
-    {
-        "date": "2024-11-05",
-        "category": "stationary",
-        "amount": 100.0,
-        "monthly_budget": 0.0
-    },
-    {
-        "date": "2024-11-06",
-        "category": "abc",
-        "amount": 200.0,
-        "monthly_budget": 0.0
-    },
-    {
-        "date": "2024-11-09",
-        "category": "stationary",
+        "id": 2,
+        "date": "2024-7-25",
+        "category": "pizza",
         "amount": 2000.0,
-        "monthly_budget": 0.0
+        "remark": "Test -2"
+    },
+    {
+        "id": 3,
+        "date": "2024-9-28",
+        "category": "food",
+        "amount": 10000.0,
+        "remark": "Test -3"
+    },
+    {
+        "id": 4,
+        "date": "2024-10-28",
+        "category": "food",
+        "amount": 800.0,
+        "remark": "Test -3"
     }
 ]

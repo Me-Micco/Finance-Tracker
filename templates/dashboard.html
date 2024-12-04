@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Tracker Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      h1,
+      h2 {
+        text-align: center;
+        color: #2596be;
+      }
+      .flex-container {
+        display: flex;
+        gap: 20px;
+      }
+      .divider {
+        width: 2px;
+        background: #ddd;
+        margin: 0 10px;
+      }
+      .section {
+        flex: 1;
+        padding: 10px;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      input,
+      button {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      button {
+        background-color: #2596be;
+        color: white;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #1d7fa5;
+      }
+      .charts {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        align-items: center;
+      }
+      canvas {
+        max-width: 80%;
+        height: 400px;
+        margin-bottom: 20px;
+      }
+      ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      ul li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        background: #f9f9f9;
+      }
+      ul li span {
+        font-weight: bold;
+      }
+      .delete-btn {
+        padding: 5px 10px;
+        background-color: #ff6b6b;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .delete-btn:hover {
+        background-color: #e63946;
+      }
+      @media (max-width: 1200px) {
+        canvas {
+          max-width: 90%;
+        }
+      }
+      @media (max-width: 768px) {
+        canvas {
+          max-width: 100%;
+          height: 350px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Expense Tracker Dashboard</h1>
+
+      <!-- Add Expenses and Set Budget Section -->
+      <div class="flex-container">
+        <div class="section">
+          <h2>Add Expense</h2>
+          <form id="expense-form" action="/add_expense" method="POST">
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required />
+            <label for="category">Category:</label>
+            <input type="text" id="category" name="category" required />
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" name="amount" required />
+            <label for="remark">Remark:</label>
+            <input
+              type="text"
+              id="remark"
+              name="remark"
+              placeholder="Optional"
+            />
+            <button type="submit">Add Expense</button>
+          </form>
+        </div>
+        <div class="divider"></div>
+        <div class="section">
+          <h2>Set Budget</h2>
+          <form id="budget-form" action="/set_budget" method="POST">
+            <label for="budget-category">Category:</label>
+            <input type="text" id="budget-category" name="category" required />
+            <label for="budget-amount">Monthly Budget:</label>
+            <input type="number" id="budget-amount" name="budget" required />
+            <button type="submit">Set Budget</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Expense List and Charts Section -->
+      <div class="flex-container">
+        <div class="section">
+          <h2>Expense List</h2>
+          <ul id="expense-list">
+            <li>
+              <strong>Date</strong>
+              <strong>Category</strong>
+              <strong>Amount</strong>
+              <strong>Remark</strong>
+              <strong>Action</strong>
+            </li>
+            {% for expense in expenses %}
+            <li>
+              <span>{{ expense.date }}</span>
+              <span>{{ expense.category }}</span>
+              <span>₹{{ expense.amount }}</span>
+              <span>{{ expense.remark or 'N/A' }}</span>
+              <form action="/delete_expense" method="POST" style="margin: 0">
+                <input type="hidden" name="id" value="{{ expense.id }}" />
+                <button class="delete-btn" type="submit">Delete</button>
+              </form>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="divider"></div>
+        <div class="section">
+          <h2>Charts</h2>
+          <div class="charts">
+            <!-- Line Chart First -->
+            <canvas id="lineChart"></canvas>
+            <!-- Bar Chart Second -->
+            <canvas id="barChart"></canvas>
+            <!-- Pie Chart Third -->
+            <canvas id="pieChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Expense data passed from Flask backend
+      const expensesByCategory = {{ expenses_by_category | tojson | safe }};
+      const expensesByMonth = {{ expenses_by_month | tojson | safe }};
+      const budgets = {{ budgets | tojson | safe }};
+
+      // Line Chart - Monthly Expenses vs Budget
+      const lineChart = new Chart(document.getElementById('lineChart'), {
+          type: 'line',
+          data: {
+              labels: Object.keys(expensesByMonth),
+              datasets: [
+                  {
+                      label: 'Monthly Expenses',
+                      data: Object.values(expensesByMonth),
+                      borderColor: '#2596be',
+                      tension: 0.1,
+                      fill: false
+                  },
+                  {
+                      label: 'Total Budget',
+                      data: Object.keys(expensesByMonth).map(() =>
+                          Object.values(budgets).reduce((a, b) => a + b, 0)
+                      ),
+                      borderColor: 'red',
+                      borderDash: [5, 5],
+                      tension: 0,
+                      fill: false
+                  }
+              ]
+          },
+          options: {
+              responsive: true,
+              plugins: {
+                  title: {
+                      display: true,
+                      text: 'Monthly Expenses vs Budget'
+                  }
+              },
+              scales: {
+                  y: {
+                      beginAtZero: true,
+                      title: {
+                          display: true,
+                          text: 'Amount'
+                      }
+                  }
+              }
+          }
+      });
+
+      // Bar Chart - Monthly Expenses
+      const barChart = new Chart(document.getElementById('barChart'), {
+          type: 'bar',
+          data: {
+              labels: Object.keys(expensesByMonth),
+              datasets: [{
+                  label: 'Monthly Expenses',
+                  data: Object.values(expensesByMonth),
+                  backgroundColor: '#2596be',
+              }]
+          },
+          options: {
+              responsive: true,
+              plugins: {
+                  legend: { position: 'top' },
+                  title: { display: true, text: 'Monthly Expenses' }
+              }
+          }
+      });
+
+      // Pie Chart - Expenses by Category
+      const pieChart = new Chart(document.getElementById('pieChart'), {
+          type: 'pie',
+          data: {
+              labels: Object.keys(expensesByCategory),
+              datasets: [{
+                  label: 'Expenses by Category',
+                  data: Object.values(expensesByCategory),
+                  backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+              }]
+          },
+          options: {
+              responsive: true,
+              plugins: {
+                  title: { display: true, text: 'Expenses by Category' }
+              }
+          }
+      });
+    </script>
+  </body>
+</html>

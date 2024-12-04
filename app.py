@@ -1,105 +1,134 @@
-from flask import Flask, request, jsonify, render_template
-import json
 import os
+import json
+from datetime import datetime
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 
 app = Flask(__name__)
 
-# Paths for data files
-EXPENSE_FILE = "data/expenses.json"
-BUDGET_FILE = "data/budgets.json"
+# Path to the data directory
+DATA_DIR = os.path.join(os.getcwd(), "data")
+os.makedirs(DATA_DIR, exist_ok=True)  # Ensure data directory exists
+BUDGETS_FILE = os.path.join(DATA_DIR, "budgets.json")
+EXPENSES_FILE = os.path.join(DATA_DIR, "expenses.json")
 
-# Utility Functions
-def load_expenses():
-    if os.path.exists(EXPENSE_FILE):
-        with open(EXPENSE_FILE, 'r') as f:
-            return json.load(f)
-    return []
+# Utility functions to load and save JSON data
+def load_data(file_path):
+    try:
+        with open(file_path, "r") as file:
+            return json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return [] if "expenses" in file_path else {}
 
-def save_expenses(expenses):
-    with open(EXPENSE_FILE, 'w') as f:
-        json.dump(expenses, f, indent=4)
+def save_data(file_path, data):
+    with open(file_path, "w") as f:
+        json.dump(data, f, indent=4)
 
-def load_budgets():
-    if os.path.exists(BUDGET_FILE):
-        with open(BUDGET_FILE, 'r') as f:
-            return json.load(f)
-    return {}
+def generate_unique_id(data):
+    """Generate a unique ID for new entries."""
+    return max([entry.get('id', 0) for entry in data] + [0]) + 1
 
-def save_budgets(budgets):
-    with open(BUDGET_FILE, 'w') as f:
-        json.dump(budgets, f, indent=4)
+# Load budgets and expenses on startup
+budgets = load_data(BUDGETS_FILE)
+expenses = load_data(EXPENSES_FILE)
 
-# Routes
-@app.route('/')
-def home():
-    return render_template("index.html")
+@app.route("/")
+def dashboard():
+    """Render the main dashboard with expenses and budgets"""
+    # Ensure budgets do not have None values
+    safe_budgets = {k: (v if v is not None else 0) for k, v in budgets.items()}
+    
+    # Prepare data for charts
+    expenses_by_category = {}
+    expenses_by_month = {}
+    
+    for expense in expenses:
+        # Aggregate expenses by category
+        category = expense['category']
+        amount = float(expense['amount'])
+        expenses_by_category[category] = expenses_by_category.get(category, 0) + amount
+        
+        # Aggregate expenses by month
+        month = datetime.strptime(expense['date'], '%Y-%m-%d').strftime('%B')
+        expenses_by_month[month] = expenses_by_month.get(month, 0) + amount
+    
+    return render_template(
+        "dashboard.html", 
+        expenses=expenses, 
+        budgets=safe_budgets,
+        expenses_by_category=expenses_by_category,
+        expenses_by_month=expenses_by_month
+    )
 
-@app.route('/visualize')
-def visualize():
-    return render_template("visualize.html")
-
-# Add a new expense
-@app.route('/add_expense', methods=['POST'])
+@app.route("/add_expense", methods=["POST"])
 def add_expense():
-    data = request.json
-    date = data['date']
-    category = data['category']
-    amount = float(data['amount'])
-    monthly_budget = float(data.get('monthly_budget', 0))
+    """Add a new expense from the form submission"""
+    date = request.form.get('date')
+    category = request.form.get('category')
+    amount = request.form.get('amount')
+    remark = request.form.get('remark', '')
 
-    expenses = load_expenses()
-    expenses.append({
-        "date": date,
-        "category": category,
-        "amount": amount,
-        "monthly_budget": monthly_budget
-    })
-    save_expenses(expenses)
-    return jsonify({"message": "Expense added successfully!"})
+    # Validate input
+    if not all([date, category, amount]):
+        return redirect(url_for('dashboard'))
 
-# Fetch all expenses
-@app.route('/get_expenses', methods=['GET'])
+    # Create expense entry
+    new_expense = {
+        'id': generate_unique_id(expenses),
+        'date': date,
+        'category': category,
+        'amount': float(amount),
+        'remark': remark,
+    }
+
+    # Append the new expense
+    expenses.append(new_expense)
+    save_data(EXPENSES_FILE, expenses)
+
+    return redirect(url_for('dashboard'))
+
+@app.route("/set_budget", methods=["POST"])
+def set_budget():
+    """Set or update budget for a category"""
+    category = request.form.get('category')
+    budget_amount = request.form.get('budget')
+
+    if not all([category, budget_amount]):
+        return redirect(url_for('dashboard'))
+
+    # Update or add budget for the category
+    budgets[category] = float(budget_amount)
+    save_data(BUDGETS_FILE, budgets)
+
+    return redirect(url_for('dashboard'))
+
+@app.route("/delete_expense", methods=["POST"])
+def delete_expense():
+    """Delete an expense by its ID"""
+    expense_id = request.form.get('id')
+    
+    try:
+        expense_id = int(expense_id)
+        # Find and remove the expense with the matching ID
+        expenses[:] = [exp for exp in expenses if exp['id'] != expense_id]
+        
+        # Update the IDs to ensure consistency
+        for i, exp in enumerate(expenses):
+            exp['id'] = i
+        
+        save_data(EXPENSES_FILE, expenses)
+    except (ValueError, TypeError):
+        pass
+
+    return redirect(url_for('dashboard'))
+
+@app.route("/get_expenses", methods=["GET"])
 def get_expenses():
-    expenses = load_expenses()
+    """API endpoint to retrieve expenses"""
     return jsonify(expenses)
 
-@app.route('/delete_expense', methods=['POST'])
-def delete_expense():
-    data = request.json
-    date = data['date']
-    category = data['category']
-    amount = float(data['amount'])
-
-    expenses = load_expenses()
-
-    # Delete the first matching entry
-    for expense in expenses:
-        if (expense['date'] == date and 
-            expense['category'] == category and 
-            float(expense['amount']) == amount):
-            expenses.remove(expense)
-            break
-
-    save_expenses(expenses)
-    return jsonify({"message": "Expense deleted successfully!"})
-
-
-# Set a fixed budget for a category
-@app.route('/set_budget', methods=['POST'])
-def set_budget():
-    data = request.json
-    category = data['category']
-    budget = float(data['budget'])
-
-    budgets = load_budgets()
-    budgets[category] = budget
-    save_budgets(budgets)
-    return jsonify({"message": f"Budget for '{category}' set to {budget}!"})
-
-# Get all budgets
-@app.route('/get_budgets', methods=['GET'])
+@app.route("/get_budgets", methods=["GET"])
 def get_budgets():
-    budgets = load_budgets()
+    """API endpoint to retrieve budgets"""
     return jsonify(budgets)
 
 if __name__ == "__main__":

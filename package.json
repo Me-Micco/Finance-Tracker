@@ -1,5 +1,24 @@
 {
   "dependencies": {
     "chart.js": "^4.4.6"
-  }
+  },
+  "name": "finance-tracker",
+  "description": "Certainly! Here's a README file content for your Expense Tracker application:",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Me-Micco/Finance-Tracker.git"
+  },
+  "author": "SACHI VERMA",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Me-Micco/Finance-Tracker/issues"
+  },
+  "homepage": "https://github.com/Me-Micco/Finance-Tracker#readme"
 }
